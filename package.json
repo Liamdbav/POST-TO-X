@@ -1,12 +1,31 @@
 {
   "name": "repo-to-post",
   "displayName": "Post to X",
-  "description": "Generate X posts from your repository README",
-  "version": "0.0.1",
+  "description": "Generate X (Twitter) posts from your repository README with one command",
+  "version": "0.1.0",
+  "publisher": "Liamdbav",
+  "author": {
+    "name": "Liam"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Liamdbav/POST-TO-X"
+  },
+  "homepage": "https://github.com/Liamdbav/POST-TO-X#readme",
+  "bugs": {
+    "url": "https://github.com/Liamdbav/POST-TO-X/issues"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": ["Other"],
+  "categories": ["Other", "AI"],
+  "keywords": ["twitter", "x", "social", "readme", "publish", "llm", "ai"],
+  "icon": "assets/icon.png",
+  "galleryBanner": {
+    "color": "#1DA1F2",
+    "theme": "dark"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
@@ -15,17 +34,76 @@
         "command": "repo-to-post.generatePost",
         "title": "Post to X: Generate Post from README"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Post to X",
+      "properties": {
+        "repoToPost.llmProvider": {
+          "type": "string",
+          "enum": ["anthropic", "openai"],
+          "default": "anthropic",
+          "description": "LLM provider used to generate posts"
+        },
+        "repoToPost.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for the selected LLM provider"
+        },
+        "repoToPost.xConsumerKey": {
+          "type": "string",
+          "default": "",
+          "description": "Clé Consommateur — section \"Clés OAuth 1.0\" sur developer.twitter.com"
+        },
+        "repoToPost.xConsumerSecret": {
+          "type": "string",
+          "default": "",
+          "description": "Secret Consommateur — section \"Clés OAuth 1.0\" sur developer.twitter.com"
+        },
+        "repoToPost.xAccessToken": {
+          "type": "string",
+          "default": "",
+          "description": "Jeton d'accès — section \"Clés OAuth 1.0\" (doit avoir permission Lire et écrire)"
+        },
+        "repoToPost.xAccessTokenSecret": {
+          "type": "string",
+          "default": "",
+          "description": "Secret du jeton d'accès — section \"Clés OAuth 1.0\" sur developer.twitter.com"
+        },
+        "repoToPost.defaultTones": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["technical", "launch", "community"],
+          "description": "Default tones proposed when generating a post"
+        },
+        "repoToPost.customTemplates": {
+          "type": "array",
+          "default": [],
+          "description": "Templates personnalisés qui s'ajoutent aux templates intégrés",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "body", "hashtags"],
+            "properties": {
+              "id":       { "type": "string" },
+              "label":    { "type": "string" },
+              "body":     { "type": "string" },
+              "hashtags": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
   },
   "scripts": {
     "compile": "webpack --mode development",
     "watch": "webpack --mode development --watch",
-    "package": "webpack --mode production --devtool hidden-source-map",
-    "vscode:prepublish": "npm run package"
+    "vscode:prepublish": "webpack --mode production --devtool hidden-source-map",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "webpack": "^5.89.0",
